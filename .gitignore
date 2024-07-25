@@ -1,0 +1,5 @@
+# Ignore model files
+models/
+
+# Ignore processed data files
+data/processed/*.csv
