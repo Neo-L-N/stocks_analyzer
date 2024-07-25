@@ -1,0 +1,10 @@
+pandas
+numpy
+scikit-learn
+keras
+tensorflow
+ta
+joblib
+xgboost
+lightgbm
+caboost
