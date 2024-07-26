@@ -155,6 +155,13 @@ This project aims to predict stock prices using historical data of S&P 500 stock
 
 Support Vector Regression (SVR) is a type of Support Vector Machine (SVM) that is used for regression tasks. The main idea of SVR is to find a function that approximates the mapping from the input space to the output space by minimizing the prediction error. SVR uses a linear model in a high-dimensional space created by a kernel function, allowing it to handle non-linear relationships in the data. The key parameters of SVR include the kernel type (e.g., linear, polynomial, RBF), the regularization parameter (C), and the epsilon parameter which defines a margin of tolerance where no penalty is given to errors.
 
+#### Summary of SVR Data
+
+* **Training Set** : Initially 80% of the data, further reduced to 500 samples for quicker training.
+* **Testing Set** : 20% of the data.
+
+This means that the SVR model is trained on a small, randomly sampled subset of the original dataset (500 samples), and it is evaluated on 20% of the original dataset. This sampling is done to speed up the training process, but it might affect the model's performance depending on the dataset size and characteristics.
+
 ### Random Forest (RF)
 
 Random Forest is an ensemble learning method that builds multiple decision trees and merges them together to get a more accurate and stable prediction. Each tree in the forest is trained on a bootstrap sample from the training data, and during the construction of the tree, a random subset of features is considered for splitting at each node. This randomness helps to reduce the variance of the model and prevent overfitting. The final prediction of the Random Forest is obtained by averaging the predictions of all individual trees (for regression) or by majority voting (for classification).
@@ -183,6 +190,7 @@ The performance of each machine learning model is evaluated using the Mean Squar
 ### SVR MSE: 1.555318016401746
 
 The SVR (Support Vector Regression) model has an MSE of approximately 1.56%. This means that, on average, the SVR model's predictions are off by about 1.56% from the actual stock prices. For instance, if the actual stock price is $100, the SVR model's prediction would typically be within the range of $98.44 to $101.56. This indicates that the SVR model's predictions are the closest to the true values among all the models evaluated.
+
 
 ### RandomForest MSE: 3.806296152736704
 
