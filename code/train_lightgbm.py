@@ -3,41 +3,46 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from lightgbm import LGBMRegressor
 import joblib
 
-# Load data
-data = pd.read_csv('data/processed/features_data.csv')
+def train_lightgbm(input_file, model_file):
+    print("Loading data...")
+    data = pd.read_csv(input_file)
+    print("Data loaded successfully")
 
-# Select features and target
-features = ['open', 'high', 'low', 'volume', 'return', 'rolling_mean', 'rolling_std']
-target = 'close'
+    features = ['open', 'high', 'low', 'volume', 'return', 'rolling_mean', 'rolling_std']
+    target = 'close'
+    X = data[features]
+    y = data[target]
 
-X = data[features]
-y = data[target]
+    print("Selecting features and target variable...")
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    print("Data split into training and testing sets")
 
-# Sample a smaller subset of the data for quicker testing
-X_sample, _, y_sample, _ = train_test_split(X, y, train_size=0.1, random_state=42)
+    model = LGBMRegressor()
 
-# Split data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X_sample, y_sample, test_size=0.2, random_state=42)
+    # Define the parameter grid for hyperparameter tuning
+    param_grid = {
+        'n_estimators': [50, 100],
+        'learning_rate': [0.01, 0.1],
+        'num_leaves': [31, 50],
+        'boosting_type': ['gbdt'],
+        'objective': ['regression'],
+    }
 
-# Define the model
-model = LGBMRegressor()
+    print("Starting GridSearchCV for hyperparameter tuning...")
+    grid_search = GridSearchCV(model, param_grid, cv=3, n_jobs=-1, verbose=2, scoring='neg_mean_squared_error')
+    grid_search.fit(X_train, y_train)
+    print("GridSearchCV completed")
 
-# Define the parameter grid
-param_grid = {
-    'n_estimators': [50, 100],
-    'learning_rate': [0.01, 0.1],
-    'num_leaves': [31, 50],
-    'boosting_type': ['gbdt'],
-    'objective': ['regression'],
-}
+    print(f"Best parameters found: {grid_search.best_params_}")
 
-# Perform GridSearchCV
-grid_search = GridSearchCV(model, param_grid, cv=3, n_jobs=-1, verbose=2)
-grid_search.fit(X_train, y_train)
+    best_model = grid_search.best_estimator_
 
-print(f"Best parameters found: {grid_search.best_params_}")
+    print("Saving the best model...")
+    joblib.dump(best_model, model_file)
+    print(f"Model saved to {model_file}")
 
-# Save the model
-best_model = grid_search.best_estimator_
-joblib.dump(best_model, 'models/lightgbm_model.joblib')
-print("Model saved to models/lightgbm_model.joblib")
+if __name__ == "__main__":
+    input_file = 'data/processed/features_data.csv'
+    model_file = 'models/lightgbm_model.joblib'
+    train_lightgbm(input_file, model_file)
+

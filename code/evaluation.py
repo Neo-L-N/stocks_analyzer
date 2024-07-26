@@ -4,6 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
+import numpy as np
 import xgboost as xgb
 
 def evaluate_models(input_file, svr_model_file, rf_model_file, lstm_model_file, xgb_model_file, lgbm_model_file, catboost_model_file, results_file):
@@ -51,9 +52,16 @@ def evaluate_models(input_file, svr_model_file, rf_model_file, lstm_model_file, 
             y_pred = model.predict(X_test)
         else:
             y_pred = model.predict(X_test)
+        
+        # Save the predictions as numpy files
+        np.save(f'results/{model_name.lower()}_predictions.npy', y_pred)
+        
         mse = mean_squared_error(y_test, y_pred)
         results[model_name] = mse
         print(f"{model_name} MSE: {mse}")
+
+    # Save true values for plotting
+    np.save('results/true_values.npy', y_test)
 
     # Save results
     results_df = pd.DataFrame(list(results.items()), columns=['Model', 'MSE'])

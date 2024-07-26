@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras.layers import LSTM, Dense, Dropout
 
 def train_lstm(input_file, model_file):
     print("Loading data...")
@@ -28,12 +28,15 @@ def train_lstm(input_file, model_file):
 
     print("Building LSTM model...")
     model = Sequential()
-    model.add(LSTM(50, activation='relu', input_shape=(X_train_scaled.shape[1], 1)))
+    model.add(LSTM(100, activation='relu', return_sequences=True, input_shape=(X_train_scaled.shape[1], 1)))
+    model.add(Dropout(0.2))
+    model.add(LSTM(100, activation='relu'))
+    model.add(Dropout(0.2))
     model.add(Dense(1))
     model.compile(optimizer='adam', loss='mse')
 
     print("Training LSTM model...")
-    model.fit(X_train_scaled, y_train, epochs=10, batch_size=32, validation_data=(X_test_scaled, y_test))
+    model.fit(X_train_scaled, y_train, epochs=50, batch_size=32, validation_data=(X_test_scaled, y_test))
 
     model.save(model_file)
     print(f"Model saved to {model_file}")
@@ -42,4 +45,3 @@ if __name__ == "__main__":
     input_file = 'data/processed/features_data.csv'
     model_file = 'models/lstm_model.h5'
     train_lstm(input_file, model_file)
-
