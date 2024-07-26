@@ -1,5 +1,12 @@
-# Ignore model files
-models/
+# Ignore models
+models/*.joblib
+models/*.h5
 
-# Ignore processed data files
+# Ignore CSV files in processed data directory
 data/processed/*.csv
+
+# Ignore all numpy files in the results directory
+results/*.npy
+
+# Ignore the results CSV file
+results/*.csv

@@ -1,6 +1,0 @@
-Mean Squared Error (SVR): 16802.38187765461
-Mean Absolute Percentage Error (SVR): 103.214987067096%
-Mean Squared Error (Random Forest): 14429.75533585934
-Mean Absolute Percentage Error (Random Forest): 77.390013395192%
-Mean Squared Error (LSTM): 12055.210957823896
-Mean Absolute Percentage Error (LSTM): 53.505988201970034%
