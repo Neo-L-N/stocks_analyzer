@@ -10,3 +10,5 @@ results/*.npy
 
 # Ignore the results CSV file
 results/*.csv
+
+data/processed/features_data.csv
