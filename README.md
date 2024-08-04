@@ -144,3 +144,122 @@ The LightGBM model has an MSE of approximately 340.29%. This means that, on aver
 ### CatBoost MSE: 268.12847603201175
 
 The CatBoost model has an MSE of approximately 268.13%. This means that, on average, the CatBoost model's predictions are off by about 268.13% from the actual stock prices. For instance, if the actual stock price is $100, the CatBoost model's prediction would typically be within the range of $-168.13 to $368.13. This high MSE indicates that the CatBoost model's predictions are also not very close to the true values. However, it performs slightly better than the XGBoost and LightGBM models.
+
+
+## Why does SVR work so well?
+
+The SVR (Support Vector Regression) model works well for several reasons, especially in the context of predicting stock prices using historical data. Here are the key factors contributing to its effectiveness:
+
+### 1. **Ability to Handle Non-Linear Relationships**
+
+SVR can handle both linear and non-linear relationships in the data:
+
+* **Kernel Trick** : By using different kernel functions (e.g., linear, RBF), SVR can map the input features into higher-dimensional spaces, enabling it to capture complex, non-linear relationships. This is particularly useful in stock price prediction where the relationships between features and target can be non-linear.
+
+### 2. **Regularization**
+
+SVR includes a regularization parameter `C` that helps to balance the trade-off between achieving a low training error and minimizing the model complexity:
+
+* **C Parameter** : A higher value of `C` aims to fit the training data as well as possible, while a lower value of `C` will create a simpler model that might not fit the training data perfectly but generalizes better to new data.
+
+### 3. **Margin of Tolerance (Epsilon) Parameter**
+
+SVR introduces an epsilon parameter (`epsilon`) that specifies a margin of tolerance where no penalty is given for errors. This helps to make the model robust to noise in the data:
+
+* **Epsilon-Insensitive Loss** : This loss function ignores errors within a specified epsilon margin, making the model less sensitive to outliers and noise, which are common in stock price data.
+
+### 4. **Feature Scaling**
+
+The use of `StandardScaler` in the pipeline ensures that all features are scaled to have zero mean and unit variance:
+
+* **Standardization** : This step is crucial for SVR as it helps the algorithm to converge faster and prevents features with larger ranges from dominating the model training process.
+
+### 5. **Hyperparameter Optimization**
+
+The use of `GridSearchCV` allows for an exhaustive search over the specified hyperparameter grid to find the best combination of parameters:
+
+* **Cross-Validation** : Using cross-validation helps to ensure that the model performs well on unseen data and prevents overfitting.
+* **Hyperparameter Tuning** : By testing different values of `kernel`, `C`, and `gamma`, the model is fine-tuned to achieve the best performance.
+
+### 6. **Robustness to Overfitting**
+
+SVR is generally robust to overfitting due to its regularization capabilities and the use of cross-validation:
+
+* **Regularization** : The regularization parameter (`C`) helps to prevent the model from overfitting to the training data by penalizing large coefficients.
+* **Cross-Validation** : By validating the model on different subsets of the data, `GridSearchCV` helps to ensure that the selected model generalizes well to new data.
+
+### 7. **Handling of Multicollinearity**
+
+SVR can handle multicollinearity (high correlation between features) effectively:
+
+* **Kernel Methods** : The kernel methods used in SVR can manage multicollinearity by projecting the data into higher-dimensional spaces where the relationships between features might become more linear and less correlated.
+
+### 8. **Effectiveness in Time Series Data**
+
+Although SVR is not specifically designed for time series data, it can be effective in this context due to its ability to model complex relationships:
+
+* **Feature Engineering** : By incorporating features such as rolling mean and rolling standard deviation, the model can capture temporal patterns and trends in the stock prices.
+
+### Summary
+
+SVR's effectiveness in stock price prediction stems from its ability to handle non-linear relationships, regularization to prevent overfitting, robust performance through hyperparameter tuning, and the inclusion of feature scaling. These factors, combined with its capability to handle noise and outliers, make SVR a powerful tool for this type of regression task.
+
+## Why does RF work so well?
+
+The Random Forest (RF) model works very well for stock price prediction due to several inherent advantages and properties of the Random Forest algorithm. Here are the key factors contributing to its effectiveness:
+
+### 1. **Ensemble Learning**
+
+Random Forest is an ensemble learning method that builds multiple decision trees and merges them together to get a more accurate and stable prediction:
+
+* **Multiple Trees** : Each tree is trained on a different subset of the data, which helps to capture different patterns in the data.
+* **Averaging Predictions** : For regression tasks, the final prediction is obtained by averaging the predictions of all individual trees, which helps to reduce variance and avoid overfitting.
+
+### 2. **Robustness to Overfitting**
+
+Random Forests are generally robust to overfitting, especially when dealing with large datasets:
+
+* **Bootstrap Aggregation (Bagging)** : By training each tree on a bootstrap sample (randomly sampled with replacement) from the training data, the model reduces the risk of overfitting.
+* **Random Feature Selection** : At each split in a tree, a random subset of features is considered, which further helps to decorrelate the trees and improve generalization.
+
+### 3. **Handling of Non-Linear Relationships**
+
+Random Forest can capture complex non-linear relationships in the data:
+
+* **Decision Trees** : Each tree in the forest can model non-linear interactions between features, making the ensemble capable of handling complex patterns.
+
+### 4. **Feature Importance**
+
+Random Forests can provide estimates of feature importance, which can be useful for understanding the underlying data:
+
+* **Feature Importance Scores** : The model can rank features based on their importance, helping to identify which features contribute most to the prediction.
+
+### 5. **Flexibility and Scalability**
+
+Random Forests are flexible and can handle both small and large datasets effectively:
+
+* **Scalability** : The model can be scaled to handle large datasets by increasing the number of trees (`n_estimators`).
+* **Parallelism** : Training of individual trees can be done in parallel, leveraging multi-core processors to speed up training.
+
+### 6. **Hyperparameter Optimization**
+
+The use of `GridSearchCV` allows for an exhaustive search over the specified hyperparameter grid to find the best combination of parameters:
+
+* **Cross-Validation** : Using cross-validation helps to ensure that the model performs well on unseen data and prevents overfitting.
+* **Hyperparameter Tuning** : By testing different values of `n_estimators`, `max_depth`, `max_features`, and `criterion`, the model is fine-tuned to achieve the best performance.
+
+### 7. **Robustness to Outliers and Noise**
+
+Random Forests are relatively robust to outliers and noise in the data:
+
+* **Averaging Mechanism** : The averaging of predictions from multiple trees helps to smooth out noise and reduce the impact of outliers.
+
+### 8. **Reduced Bias**
+
+Random Forests can achieve low bias by combining multiple weak learners (decision trees):
+
+* **Low Bias** : Each individual tree might have high bias, but combining them reduces the overall bias of the ensemble.
+
+### Summary
+
+Random Forest's ability to handle non-linear relationships, robustness to overfitting, flexibility, scalability, and effective hyperparameter tuning make it a powerful tool for stock price prediction. The provided code leverages these advantages to train and fine-tune the model for optimal performance.

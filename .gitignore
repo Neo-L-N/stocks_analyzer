@@ -12,3 +12,7 @@ results/*.npy
 results/*.csv
 
 data/processed/features_data.csv
+
+#Ignore pngs
+results/rf_plots/*.png
+results/svr_plots/*.png
