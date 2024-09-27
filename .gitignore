@@ -2,8 +2,7 @@
 models/*.joblib
 models/*.h5
 
-# Ignore CSV files in processed data directory
-data/processed/*.csv
+
 
 # Ignore all numpy files in the results directory
 results/*.npy
