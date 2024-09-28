@@ -1,30 +1,31 @@
 // src/App.js
 
 import React, { useState } from 'react';
-import './App.css';
+import DateRangePicker from './components/common/DateRangePicker'; // Correct path
 import StockPriceChart from './components/charts/StockPriceChart';
 
+
 function App() {
-  // State management for the selected stock, date range, and graph options
-  const [selectedStock, setSelectedStock] = useState("AAPL");
-  const [startDate, setStartDate] = useState("2015-01-01");
-  const [endDate, setEndDate] = useState("2018-12-31");
-  const [graphOptions, setGraphOptions] = useState(["actual", "svr_predicted", "rf_predicted"]);
+  const [startDate, setStartDate] = useState(new Date("2013-01-01")); // Set your start date
+  const [endDate, setEndDate] = useState(new Date("2018-01-01")); // Set your end date
 
   return (
     <div className="App">
       <header className="App-header">
         <h1>Stock Prediction Dashboard</h1>
-        <p>Select a stock, date range, and view predictions:</p>
+        <DateRangePicker
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
+        />
+        <StockPriceChart
+          startDate={startDate}
+          endDate={endDate}
+          selectedStock="AAPL" // Example stock, use state if needed
+          graphOptions={["actual", "svr_predicted", "rf_predicted"]}
+        />
       </header>
-
-      {/* Render the stock price chart with appropriate props */}
-      <StockPriceChart
-        selectedStock={selectedStock}
-        startDate={startDate}
-        endDate={endDate}
-        graphOptions={graphOptions}
-      />
     </div>
   );
 }

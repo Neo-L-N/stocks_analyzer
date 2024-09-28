@@ -2,8 +2,6 @@
 models/*.joblib
 models/*.h5
 
-
-
 # Ignore all numpy files in the results directory
 results/*.npy
 

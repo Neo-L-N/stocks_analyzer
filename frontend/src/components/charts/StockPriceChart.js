@@ -1,9 +1,9 @@
 // src/components/charts/StockPriceChart.js
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import Papa from 'papaparse';
+import Papa from 'papaparse'; // Import papaparse for CSV parsing
 
-// Import necessary chart.js components and register them
+// Import necessary chart.js components and register them for chart.js v4
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,8 +15,16 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register the necessary components globally
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+// Register the necessary components with Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function StockPriceChart({ selectedStock, startDate, endDate, graphOptions }) {
   const [chartData, setChartData] = useState(null);
@@ -46,6 +54,7 @@ function StockPriceChart({ selectedStock, startDate, endDate, graphOptions }) {
             label: "Actual Values",
             data: filteredData.map((row) => parseFloat(row.close)),
             borderColor: 'rgba(75,192,192,1)',
+            borderWidth: 2,
             fill: false,
           });
         }
@@ -54,6 +63,7 @@ function StockPriceChart({ selectedStock, startDate, endDate, graphOptions }) {
             label: "SVR Predicted",
             data: filteredData.map((row) => parseFloat(row.svr_predicted)),
             borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 2,
             fill: false,
           });
         }
@@ -62,6 +72,7 @@ function StockPriceChart({ selectedStock, startDate, endDate, graphOptions }) {
             label: "RF Predicted",
             data: filteredData.map((row) => parseFloat(row.rf_predicted)),
             borderColor: 'rgba(255, 159, 64, 1)',
+            borderWidth: 2,
             fill: false,
           });
         }
@@ -81,14 +92,34 @@ function StockPriceChart({ selectedStock, startDate, endDate, graphOptions }) {
         <Line
           data={chartData}
           options={{
-            title: {
-              display: true,
-              text: `Stock Price Predictions for ${selectedStock}`,
-              fontSize: 20,
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: `Stock Price Predictions for ${selectedStock}`,
+                font: {
+                  size: 20,
+                },
+              },
+              legend: {
+                display: true,
+                position: 'top',
+              },
             },
             scales: {
-              x: { title: { display: true, text: "Date" } },
-              y: { title: { display: true, text: "Stock Price" } },
+              x: { 
+                type: 'category', 
+                title: { 
+                  display: true, 
+                  text: "Date" 
+                } 
+              },
+              y: { 
+                title: { 
+                  display: true, 
+                  text: "Stock Price" 
+                } 
+              },
             },
           }}
         />
@@ -100,3 +131,4 @@ function StockPriceChart({ selectedStock, startDate, endDate, graphOptions }) {
 }
 
 export default StockPriceChart;
+
