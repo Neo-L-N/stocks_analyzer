@@ -20,10 +20,19 @@ st.header('\n\nMachine Learning Models for Stock Price Prediction')
 
 st.write('This project aims to predict stock prices using historical '
              'data of S&P 500 stocks. Utilizing multiple machine learning models including'
-             'Support Vector Regression (SVR), Random Forest (RF), \nLong Short-Term Memory (LSTM), '
+             ' Support Vector Regression (SVR), Random Forest (RF), \nLong Short-Term Memory (LSTM), '
              'LightGBM, CatBoost, and XGBoost are trained and evaluated based on their performance.\n')
 
-model = st.selectbox('Choose a model to see how it works',
+st.subheader('Train and Test Split\n')
+st.markdown('   * __Training Set__ : Initially 80% of the data, further reduced to 500 samples for quicker training.\n'
+            ' * __Testing Set__ : 20% of the data.'
+            '\n\nThis means that the models are trained on a small, randomly sampled subset of the original dataset '
+            '(500 samples), and are evaluated on 20% of the original dataset. This sampling is done to speed up the '
+            'training process, \nbut it might affect the model''s performance depending on the dataset size and '
+            'characteristics.\n\n')
+
+st.subheader('Choose a model to see how it works')
+model = st.selectbox('',
                      options=['Choose a Model','Support Vector Regression (SVR)', 'Random Forest (RF)', 'Long Short-Term Memory (LSTM)',
                       'Light Gradient-Boosting Machine (LightGBM)', 'CatBoost', 'XGBoost'])
 
@@ -34,6 +43,13 @@ if model == 'Support Vector Regression (SVR)':
     from sklearn.datasets import make_classification
     from sklearn.svm import SVC
     from sklearn.preprocessing import StandardScaler
+
+    st.markdown('Support Vector Regression (SVR) is a type of Support Vector Machine (SVM) that is used for regression tasks.'
+                ' The main idea of SVR is to find a function that approximates the mapping from the input space to the output space '
+                'by minimizing\n the prediction error. SVR uses a linear model in a high-dimensional space created by a kernel function, '
+                'allowing it to handle non-linear relationships in the data. The key parameters of SVR include the kernel type '
+                '(e.g., linear, polynomial, RBF), the regularization parameter (C), and the epsilon parameter which defines a '
+                'margin of tolerance where no penalty is given to errors.')
 
 
     # Generate synthetic data for classification
@@ -66,7 +82,6 @@ if model == 'Support Vector Regression (SVR)':
 
     # Main function to create the plotly visualization
     def svm_visualization():
-        st.subheader("Interactive SVM Visualization")
 
         # Center the graph using inline CSS styles
         st.markdown("""
@@ -103,10 +118,16 @@ if model == 'Support Vector Regression (SVR)':
             legend_title_text='Classes'
         )
 
-        # Center the plotly chart by wrapping it in a div with the centered-container class
-        st.markdown('<div class="centered-container">', unsafe_allow_html=True)
-        st.plotly_chart(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
+        # Create two columns: One for decision boundary, the other for video
+        col1, col2 = st.columns(2)
+
+        # Display the plot in the first column
+        with col1:
+            st.video('media/svm.mp4')
+
+        # Display the video in the second column
+        with col2:
+            st.plotly_chart(fig)
 
 
     # Run the visualization
@@ -122,6 +143,15 @@ elif model == 'Random Forest (RF)':
     from sklearn.datasets import make_classification
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.preprocessing import StandardScaler
+
+    st.markdown('Random Forest is an ensemble learning method that builds multiple decision '
+                'trees and merges them together to get a more accurate and stable prediction. '
+                'Each tree in the forest is trained on a bootstrap sample from the training data,\n '
+                'and during the construction of the tree, a random subset of features is considered '
+                'for splitting at each node. This randomness helps to reduce the variance of the '
+                'model and prevent overfitting. The final prediction of the Random Forest is obtained '
+                'by averaging the predictions of all individual trees (for regression) or by majority '
+                'voting (for classification).')
 
 
     # Generate synthetic data for classification
@@ -154,8 +184,6 @@ elif model == 'Random Forest (RF)':
 
     # Main function to create the plotly visualization for Random Forest
     def random_forest_visualization():
-        st.subheader("Interactive Random Forest Visualization")
-
         # Center the graph using inline CSS styles
         st.markdown("""
         <style>
@@ -191,10 +219,16 @@ elif model == 'Random Forest (RF)':
             legend_title_text='Classes'
         )
 
-        # Center the plotly chart by wrapping it in a div with the centered-container class
-        st.markdown('<div class="centered-container">', unsafe_allow_html=True)
-        st.plotly_chart(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
+        # Create two columns: One for decision boundary, the other for video
+        col1, col2 = st.columns(2)
+
+        # Display the plot in the first column
+        with col1:
+            st.video('media/random_forest.mp4')
+
+        # Display the video in the second column
+        with col2:
+            st.plotly_chart(fig)
 
 
     # Run the visualization
@@ -234,6 +268,9 @@ model2 = st.radio('Choose a Model to see Predictions',
                   options=['Support Vector Regression (SVR)', 'Random Forest'])
 
 if model2 == 'Support Vector Regression (SVR)':
+    st.write('Select stock')
+
+elif model2 == 'Random Forest':
     st.write('Select stock')
 
 elif model2 == 'Random Forest':
