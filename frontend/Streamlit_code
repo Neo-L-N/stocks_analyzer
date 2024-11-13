@@ -2,6 +2,7 @@ from datetime import date
 import pandas as pd
 import numpy as np
 import streamlit as st
+import plotly.express as px
 
 st.set_page_config(layout='wide')
 # Inject custom CSS for centering
@@ -37,9 +38,7 @@ model = st.selectbox('',
                       'Light Gradient-Boosting Machine (LightGBM)', 'CatBoost', 'XGBoost'])
 
 if model == 'Support Vector Regression (SVR)':
-    import plotly.express as px
-    import numpy as np
-    import pandas as pd
+    
     from sklearn.datasets import make_classification
     from sklearn.svm import SVC
     from sklearn.preprocessing import StandardScaler
@@ -136,10 +135,7 @@ if model == 'Support Vector Regression (SVR)':
 
 
 elif model == 'Random Forest (RF)':
-    import streamlit as st
-    import plotly.express as px
-    import numpy as np
-    import pandas as pd
+
     from sklearn.datasets import make_classification
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.preprocessing import StandardScaler
@@ -263,15 +259,31 @@ st.markdown('In this section, we will concentrate on the predictions made by two
         'trees and combines their outputs to improve accuracy and reduce overfitting.\nIts strength lies in its '
         'ability to capture complex patterns in data, making it highly effective for predicting future stock prices.')
 
-st.header('Stock Price Predictions Per Model')
-model2 = st.radio('Choose a Model to see Predictions',
-                  options=['Support Vector Regression (SVR)', 'Random Forest'])
+# Load data
+@st.cache_data
+def load_data():
+    return pd.read_csv('csv/processed_data_with_predictions.csv')
 
-if model2 == 'Support Vector Regression (SVR)':
-    st.write('Select stock')
 
-elif model2 == 'Random Forest':
-    st.write('Select stock')
+data = load_data()
 
-elif model2 == 'Random Forest':
-    st.write('Select stock')
+# Model and Stock Selection
+st.subheader('Stock Price Predictions Per Model')
+model_choice = st.radio('Choose a Model to see Predictions',
+                        options=['Support Vector Regression (SVR)', 'Random Forest'])
+stock_choice = st.selectbox('Choose a Stock', data['Name'].unique())
+
+# Filter data based on selections
+model_column = 'svr_predicted' if model_choice == 'Support Vector Regression (SVR)' else 'rf_predicted'
+filtered_data = data[data['Name'] == stock_choice]
+
+# Plotting
+st.subheader(f'{model_choice} Predictions vs Actual Closing Prices for {stock_choice}')
+fig = px.line(filtered_data, x='date', y=['close', model_column],
+              labels={'value': 'Stock Price', 'date': 'Date'},
+              title=f'{stock_choice} Actual vs Predicted Closing Price ({model_choice})')
+
+fig.update_layout(legend_title_text='Price Type', width=2000, height=700)
+fig.update_traces(mode="lines")
+
+st.plotly_chart(fig)
