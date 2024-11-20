@@ -1,6 +1,5 @@
-from datetime import date
+
 import pandas as pd
-import numpy as np
 import streamlit as st
 import plotly.express as px
 
@@ -17,12 +16,14 @@ st.markdown("""
 # Use the custom CSS class for the title
 st.markdown("<h1 class='centered-title'>Stock Price Analyzer with Machine Learning</h1>", unsafe_allow_html=True)
 
+st.image('media/stocks.jpeg', use_column_width=True)
+
 st.header('\n\nMachine Learning Models for Stock Price Prediction')
 
 st.write('This project aims to predict stock prices using historical '
-             'data of S&P 500 stocks. Utilizing multiple machine learning models including'
-             ' Support Vector Regression (SVR), Random Forest (RF), \nLong Short-Term Memory (LSTM), '
-             'LightGBM, CatBoost, and XGBoost are trained and evaluated based on their performance.\n')
+         'data of S&P 500 stocks. Utilizing multiple machine learning models including'
+         ' Support Vector Regression (SVR), Random Forest (RF), \nLong Short-Term Memory (LSTM), '
+         'LightGBM, CatBoost, and XGBoost are trained and evaluated based on their performance.\n')
 
 st.subheader('Train and Test Split\n')
 st.markdown('   * __Training Set__ : Initially 80% of the data, further reduced to 500 samples for quicker training.\n'
@@ -34,215 +35,111 @@ st.markdown('   * __Training Set__ : Initially 80% of the data, further reduced 
 
 st.subheader('Choose a model to see how it works')
 model = st.selectbox('',
-                     options=['Choose a Model','Support Vector Regression (SVR)', 'Random Forest (RF)', 'Long Short-Term Memory (LSTM)',
-                      'Light Gradient-Boosting Machine (LightGBM)', 'CatBoost', 'XGBoost'])
+                     options=['Choose a Model', 'Support Vector Regression (SVR)', 'Random Forest (RF)',
+                              'Long Short-Term Memory (LSTM)',
+                              'Light Gradient-Boosting Machine (LightGBM)', 'CatBoost', 'XGBoost'])
 
 if model == 'Support Vector Regression (SVR)':
-    
-    from sklearn.datasets import make_classification
-    from sklearn.svm import SVC
-    from sklearn.preprocessing import StandardScaler
 
-    st.markdown('Support Vector Regression (SVR) is a type of Support Vector Machine (SVM) that is used for regression tasks.'
-                ' The main idea of SVR is to find a function that approximates the mapping from the input space to the output space '
-                'by minimizing\n the prediction error. SVR uses a linear model in a high-dimensional space created by a kernel function, '
-                'allowing it to handle non-linear relationships in the data. The key parameters of SVR include the kernel type '
-                '(e.g., linear, polynomial, RBF), the regularization parameter (C), and the epsilon parameter which defines a '
-                'margin of tolerance where no penalty is given to errors.')
+    st.markdown("Support Vector Regression (SVR) is a tool used to make predictions, especially when the relationship "
+                "between variables isn't straightforward. It works by finding a line (or curve) that best "
+                "fits the data while keeping errors as small as possible\n"
+                "Here is how SVR works:\n\n"
+                "*  It uses a mathematical method called a kernel function to transform the data into higher-"
+                "dimensional space, making it easier to spot patterns, even if they're not obvious in the original "
+                "data"
+                "\n*    It sets a ""margin of tolerance"", where small errors are acceptable, si it focuses on the "
+                "bigger picture rather than overreacting to every little variation"
+                "\n\n SVR is helpful for tasks where the data might have complex relationships, and it can be adjusted "
+                "using settings like the type of kernel (linear or non-linear) and how much flexibility to allow in "
+                "fitting the data.")
 
-
-    # Generate synthetic data for classification
-    def generate_data():
-        X, y = make_classification(n_samples=100, n_features=2, n_informative=2,
-                                   n_redundant=0, n_repeated=0, n_clusters_per_class=1, random_state=42)
-        return X, y
-
-
-    # Fit SVM and return decision boundary
-    def fit_svm(X, y):
-        # Normalize data
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(X)
-
-        # Fit SVM
-        svm = SVC(kernel='linear')
-        svm.fit(X_scaled, y)
-
-        # Create grid for plotting decision boundary
-        x_min, x_max = X_scaled[:, 0].min() - 1, X_scaled[:, 0].max() + 1
-        y_min, y_max = X_scaled[:, 1].min() - 1, X_scaled[:, 1].max() + 1
-        xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
-
-        Z = svm.predict(np.c_[xx.ravel(), yy.ravel()])
-        Z = Z.reshape(xx.shape)
-
-        return xx, yy, Z
-
-
-    # Main function to create the plotly visualization
-    def svm_visualization():
-
-        # Center the graph using inline CSS styles
-        st.markdown("""
-        <style>
-        .centered-container {
-            display: flex;
-            justify-content: center;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-        # Generate synthetic data
-        X, y = generate_data()
-
-        # Fit SVM and get decision boundary
-        xx, yy, Z = fit_svm(X, y)
-
-        # Create dataframe for plotting
-        df = pd.DataFrame(X, columns=["Feature 1", "Feature 2"])
-        df['Class'] = y
-
-        # Plot using Plotly Express
-        fig = px.scatter(df, x='Feature 1', y='Feature 2', color='Class',
-                         title="SVM Classification with Decision Boundary")
-
-        # Add decision boundary as contour plot with improved layout and without color bar
-        fig.add_contour(x=xx[0], y=yy[:, 0], z=Z, colorscale='Blues', opacity=0.5, showscale=False)
-
-        # Adjust the size of the figure (e.g., less wide)
-        fig.update_layout(
-            width=700,  # adjust width
-            height=500,  # adjust height
-            margin=dict(l=20, r=20, t=30, b=20),  # add some margins
-            legend_title_text='Classes'
-        )
-
-        # Create two columns: One for decision boundary, the other for video
-        col1, col2 = st.columns(2)
-
-        # Display the plot in the first column
-        with col1:
-            st.video('media/svm.mp4')
-
-        # Display the video in the second column
-        with col2:
-            st.plotly_chart(fig)
-
-
-    # Run the visualization
-    if __name__ == "__main__":
-        svm_visualization()
+    col1, col2, col3 = st.columns(3)
+    with col2:
+        st.video('media/svm.mp4')
 
 
 elif model == 'Random Forest (RF)':
 
-    from sklearn.datasets import make_classification
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.preprocessing import StandardScaler
+    st.markdown("Random Forest is a prediction tool that works by creating a ""forest"
+                "of decision trees and combining their results. Each tree is like an independent expert making its "
+                "own prediction, and the forest combines all these opinions for a more reliable result."
+                "Here’s how Random Forest works:\n\n"
+                "*  Each tree looks at a different random portion of the data, which helps it focus on unique aspects "
+                "of the problem."
+                "\n*    At each step of building a tree, it picks a random subset of features to decide how to "
+                "split the data."
+                "\n\n By combining all the trees:"
+                "\n*    For tasks like predicting numbers (regression), it averages their results."
+                "\n*    For tasks like deciding categories (classification), it goes with the majority vote."
+                "\n\nThis randomness helps Random Forest avoid overfitting (where a model memorizes the data too "
+                "much and struggles with new data) and ensures more accurate and stable predictions.")
 
-    st.markdown('Random Forest is an ensemble learning method that builds multiple decision '
-                'trees and merges them together to get a more accurate and stable prediction. '
-                'Each tree in the forest is trained on a bootstrap sample from the training data,\n '
-                'and during the construction of the tree, a random subset of features is considered '
-                'for splitting at each node. This randomness helps to reduce the variance of the '
-                'model and prevent overfitting. The final prediction of the Random Forest is obtained '
-                'by averaging the predictions of all individual trees (for regression) or by majority '
-                'voting (for classification).')
-
-
-    # Generate synthetic data for classification
-    def generate_data():
-        X, y = make_classification(n_samples=100, n_features=2, n_informative=2,
-                                   n_redundant=0, n_repeated=0, n_clusters_per_class=1, random_state=42)
-        return X, y
-
-
-    # Fit Random Forest and return decision boundary
-    def fit_random_forest(X, y):
-        # Normalize data
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(X)
-
-        # Fit Random Forest
-        rf = RandomForestClassifier(n_estimators=100, random_state=42)
-        rf.fit(X_scaled, y)
-
-        # Create grid for plotting decision boundary
-        x_min, x_max = X_scaled[:, 0].min() - 1, X_scaled[:, 0].max() + 1
-        y_min, y_max = X_scaled[:, 1].min() - 1, X_scaled[:, 1].max() + 1
-        xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
-
-        Z = rf.predict(np.c_[xx.ravel(), yy.ravel()])
-        Z = Z.reshape(xx.shape)
-
-        return xx, yy, Z
-
-
-    # Main function to create the plotly visualization for Random Forest
-    def random_forest_visualization():
-        # Center the graph using inline CSS styles
-        st.markdown("""
-        <style>
-        .centered-container {
-            display: flex;
-            justify-content: center;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-        # Generate synthetic data
-        X, y = generate_data()
-
-        # Fit Random Forest and get decision boundary
-        xx, yy, Z = fit_random_forest(X, y)
-
-        # Create dataframe for plotting
-        df = pd.DataFrame(X, columns=["Feature 1", "Feature 2"])
-        df['Class'] = y
-
-        # Plot using Plotly Express
-        fig = px.scatter(df, x='Feature 1', y='Feature 2', color='Class',
-                         title="Random Forest Classification with Decision Boundary")
-
-        # Add decision boundary as contour plot with improved layout and without color bar
-        fig.add_contour(x=xx[0], y=yy[:, 0], z=Z, colorscale='Blues', opacity=0.5, showscale=False)
-
-        # Adjust the size of the figure (e.g., less wide)
-        fig.update_layout(
-            width=700,  # adjust width
-            height=500,  # adjust height
-            margin=dict(l=20, r=20, t=30, b=20),  # add some margins
-            legend_title_text='Classes'
-        )
-
-        # Create two columns: One for decision boundary, the other for video
-        col1, col2 = st.columns(2)
-
-        # Display the plot in the first column
-        with col1:
-            st.video('media/random_forest.mp4')
-
-        # Display the video in the second column
-        with col2:
-            st.plotly_chart(fig)
-
-
-    # Run the visualization
-    if __name__ == "__main__":
-        random_forest_visualization()
+    col1, col2, col3 = st.columns(3)
+    with col2:
+        st.video('media/random_forest.mp4')
 
 
 elif model == 'Long Short-Term Memory (LSTM)':
-    st.text('LSTM')
+    st.markdown("Long Short-Term Memory (LSTM) is a type of advanced computer model that helps us understand patterns "
+                "over time. Think of it as a really smart memory system that can remember important information from "
+                "the past while deciding what details to forget. This makes it especially useful for tasks where the "
+                "order of events matters, like predicting stock prices, where yesterday's prices affect today's."
+                "Here's how it works:"
+                "\n\nLSTM is made up of ""cells,"" which are like tiny decision-makers."
+                "\n\nEach cell has three ""gates"" (like doors) that decide:\n\n"
+                "\n*  What new information to let in."
+                "\n*  What old information to forget.\n"
+                "\n*    What information to pass on to the next step."
+                "\n\nThis design allows LSTM to focus on the important parts of a sequence and ignore the unimportant ones. Unlike older "
+                "models, it doesn’t lose track of details from the distant past, which is a big advantage for understanding "
+                "long-term trends.")
+
+    col1, col2, col3 = st.columns(3)
+    with col2:
+        st.video('media/lstm.mp4')
+
 
 elif model == 'Light Gradient-Boosting Machine (LightGBM)':
-    st.text('LightGBM Selected')
+    st.markdown("LightGBM is a tool used to make accurate predictions quickly and efficiently. Think of it as a powerful"
+                " problem-solver designed to handle large and complex datasets. It uses a technique called gradient"
+                " boosting, which builds smarter decision trees to improve accuracy with each step."
+                "What makes LightGBM special is how it works faster and uses less memory:"
+                "\n*  It organizes data in a way that speeds up learning (called histogram-based learning)."
+                "\n*  It grows decision trees in a unique way that focuses on the most important parts of the data.\n"
+                "\n*  It bundles similar features together to save time and resources."
+                "\n\nLightGBM is great for solving problems where there’s a lot of data and many details to consider."
+                " It can be fine-tuned by adjusting settings like how many trees to build, how fast it learns, "
+                "and what kind of problem it’s solving.")
+
+    st.image('media/lgbm.png', width=800)
 
 elif model == 'CatBoost':
-    st.text('CB Selected')
+    st.markdown("CatBoost is a tool made for predictions, especially when working with data that includes categories like "
+                'Yes/No'" or "'Red/Blue/Green.'" It’s designed to handle this kind of data easily without much preparation."
+                " What makes CatBoost stand out:"
+                "\n*  It uses a clever method called ordered boosting to avoid mistakes like overfitting "
+                "(where a model learns too much from past data and struggles to work with new data)."
+                "\n*  It has special ways of working with categories that improve accuracy, such as assigning smart numerical values to categories.\n"
+                "\n\nCatBoost is known for being easy to use, fast to train, and very accurate. You can adjust settings" 
+                "like the number of steps it takes to improve, how quickly it learns, and how deep its decision trees go "
+                "to tailor it to your needs.")
+
+    st.image('media/catboost.png', width=800)
 
 elif model == 'XGBoost':
-    st.text('XGB Selected')
+    st.markdown(
+        "XGBoost is like an upgraded version of traditional tools for making predictions. It’s designed to work "
+        "efficiently and handle big tasks without slowing down."
+        "Why XGBoost is so powerful:"
+        "\n*  t uses techniques to avoid overfitting, which helps it make better predictions on new data."
+        "\n*  It can run calculations in parallel, meaning it works much faster.\n"
+        "\n*  It’s smart about handling missing or sparse data, so it doesn’t waste time on irrelevant details.\n"
+        "\n\nXGBoost is flexible and can be adjusted for different types of problems by tweaking settings "
+        "like how many rounds of improvement it goes through, how fast it learns, how complex the trees are, "
+        "and what kind of goal it’s trying to achieve.")
+
+    st.image('media/xgboost.png', width=800)
 
 st.header('\nStock Selection and Predictions')
 
