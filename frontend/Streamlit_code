@@ -2,6 +2,7 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 
 st.set_page_config(layout='wide')
 # Inject custom CSS for centering
@@ -32,6 +33,7 @@ st.markdown('   * __Training Set__ : Initially 80% of the data, further reduced 
             '(500 samples), and are evaluated on 20% of the original dataset. This sampling is done to speed up the '
             'training process, \nbut it might affect the model''s performance depending on the dataset size and '
             'characteristics.\n\n')
+st.image('media/traintest.png', width=800)
 
 st.subheader('Choose a model to see how it works')
 model = st.selectbox('',
@@ -141,6 +143,89 @@ elif model == 'XGBoost':
 
     st.image('media/xgboost.png', width=800)
 
+if st.checkbox("What is an MSE?"):
+    # Introduction to MSE
+    st.subheader("What is Mean Squared Error (MSE)?")
+    st.write("""
+    Mean Squared Error (MSE) is a popular metric for evaluating regression models. 
+    It measures the average squared difference between the predicted values and the actual values. 
+    The formula is:
+    """)
+    st.latex(r"MSE = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2")
+    st.write("""
+    - A **Lower MSE** value indicate that the model's predictions are closer to the true values.
+    - A **Higher MSE** value suggest a larger average error in predictions.
+
+    MSE is sensitive to outliers since it squares the differences, giving more weight to larger errors. 
+    Thus, it's essential to compare MSE alongside other metrics for a comprehensive evaluation.
+    """)
+
+    # MSE value graph
+    # Data
+    models = ["SVR", "Random Forest", "LSTM", "XGBoost", "LightGBM", "CatBoost"]
+    mse_values = [1.56, 3.81, 1653137682715647.8, 272.86, 340.29, 268.13]
+
+    # Title
+    st.subheader("Interactive MSE Comparison")
+
+    # Interactive Bar Chart with Plotly
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(
+        x=models,
+        y=mse_values,
+        text=[f"{val:.2f}" for val in mse_values],
+        textposition="outside",
+        marker=dict(color=["blue", "green", "orange", "red", "purple", "cyan"])
+    ))
+
+    fig.update_layout(
+
+        xaxis_title="Model",
+        yaxis_title="Mean Squared Error (MSE)",
+        yaxis=dict(type="log", title="Logarithmic Scale (Zoom Enabled)", showgrid=True),
+        template="plotly_white"
+    )
+
+    # Enable Zoom and Pan
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.markdown("""
+        ### Model Performance Summary
+
+        1. **SVR (Support Vector Regression)**  
+           - **MSE:** 1.56  
+             The most accurate model! Predictions are typically within ±1.56% of the true values.  
+             _Example_: For a 100 dollars stock price, predictions range between __98.44__ and __101.56__.
+
+        2. **Random Forest**  
+           - **MSE:** 3.81  
+             Solid performance but less accurate than SVR. Predictions deviate by around ±3.81%.  
+             _Example_: For a 100 dollars stock price, estimates range between __96.19__ and __103.81__.
+
+        3. **LSTM (Long Short-Term Memory)**  
+           - **MSE:** 1,653,137,682,715,647.8  
+             A major miss! LSTM failed to capture patterns, resulting in astronomically high errors.
+
+        4. **XGBoost**  
+           - **MSE:** 272.86  
+             Significant errors, with predictions often ±272.86% off.  
+             _Example_: For a 100 dollars stock price, estimates range from __-172.86__ to __372.86__.
+
+        5. **LightGBM** 
+           - **MSE:** 340.29  
+             Poor accuracy, with deviations of ±340.29%.  
+             _Example_: For a 100 dollars stock price, predictions range from __-240.29__ to __440.29__.
+
+        6. **CatBoost**  
+           - **MSE:** 268.13  
+             Slightly better than XGBoost and LightGBM, with errors around ±268.13%.  
+             _Example_: Predictions for 100 dollars stock price vary from __-168.13__ to __368.13__.
+        """, unsafe_allow_html=True)
+
+else:
+    st.markdown("__Check the box above to learn about Mean Squared Error (MSE) and view the comparison of models.__")
+
 st.header('\nStock Selection and Predictions')
 
 st.markdown('In this section, we will concentrate on the predictions made by two of the best-performing models: '
@@ -156,6 +241,42 @@ st.markdown('In this section, we will concentrate on the predictions made by two
         'trees and combines their outputs to improve accuracy and reduce overfitting.\nIts strength lies in its '
         'ability to capture complex patterns in data, making it highly effective for predicting future stock prices.')
 
+# Attributes Used in Stock Price Prediction Section
+st.header('Attributes Used in Stock Price Prediction')
+
+st.markdown("""
+In predicting stock prices, several key attributes are utilized to capture the market's dynamics and trends. 
+These attributes include:
+
+- **Open**: The price at which a stock first trades upon the opening of an exchange on a given trading day. 
+It provides an initial indication of the market's sentiment and can be influenced by news and events occurring after 
+the previous day's close.
+
+- **High**: The maximum price at which a stock trades during a trading session. This attribute helps in understanding 
+the stock's volatility and the upper resistance levels during the day.
+
+- **Low**: The minimum price at which a stock trades during a trading session. It is crucial for identifying the 
+stock's support levels and potential buying opportunities.
+
+- **Volume**: The total number of shares traded during a specific period. High trading volumes can indicate strong 
+investor interest and are often associated with significant price movements.
+
+- **Return**: This is typically calculated as the percentage change in the stock's price over a specific period. 
+It provides insights into the stock's performance and is a critical measure for investors.
+
+- **Rolling Mean**: Also known as the moving average, it smooths out price data by creating a constantly updated 
+average price. This helps in identifying trends over time and is useful for reducing noise in volatile data.
+
+- **Rolling Standard Deviation**: This measures the amount of variation or dispersion of a set of values. 
+In the context of stock prices, it helps in understanding the volatility over a specific period.
+
+These attributes are essential for building predictive models as they provide insights into the stock's historical 
+performance and market behavior. By analyzing these features, machine learning models can identify patterns and make 
+informed predictions about future stock prices.
+""")
+
+st.image('media/candlestick.jpg')
+
 # Load data
 @st.cache_data
 def load_data():
@@ -163,6 +284,67 @@ def load_data():
 
 
 data = load_data()
+
+# Filter data for the selected stock
+filtered_data = data[data['Name'] == 'AAPL']
+
+# Ensure the data is sorted by date
+filtered_data = filtered_data.sort_values(by='date')
+
+# Calculate Rolling Mean and Rolling Std if not already in the data
+rolling_window = 20  # Example: 20-day rolling window
+filtered_data['rolling_mean'] = filtered_data['close'].rolling(window=rolling_window).mean()
+filtered_data['rolling_std'] = filtered_data['close'].rolling(window=rolling_window).std()
+
+# Candlestick Chart Visualization
+st.subheader(f"Candlestick Chart for {'AAPL'}")
+
+# Create the candlestick chart
+fig = go.Figure()
+
+# Add candlestick trace
+fig.add_trace(go.Candlestick(
+    x=filtered_data['date'],
+    open=filtered_data['open'],
+    high=filtered_data['high'],
+    low=filtered_data['low'],
+    close=filtered_data['close'],
+    name='Candlestick'
+))
+
+# Add Rolling Mean trace
+fig.add_trace(go.Scatter(
+    x=filtered_data['date'],
+    y=filtered_data['rolling_mean'],
+    mode='lines',
+    name='Rolling Mean',
+    line=dict(color='blue', width=2)
+))
+
+# Add Rolling Std trace (as a shaded area to indicate volatility)
+fig.add_trace(go.Scatter(
+    x=filtered_data['date'],
+    y=filtered_data['rolling_std'],
+    mode='lines',
+    name='Rolling Std',
+    line=dict(color='lightblue', width=1, dash='dot'),
+    showlegend=True
+))
+
+fig.update_layout(
+    height=700,
+    xaxis_rangeslider_visible=False,
+    xaxis_range=[filtered_data['date'].iloc[-300], filtered_data['date'].iloc[-1]]
+)
+
+# Show the chart in Streamlit
+st.plotly_chart(fig)
+
+st.write("""
+This chart demonstrates the stock's **Open**, **High**, **Low**, and **Close** prices using candlesticks. 
+The **Rolling Mean** (blue line) highlights the overall trend, while the shaded area formed by **Rolling Std** 
+shows the stock's volatility over time.
+""")
 
 # Model and Stock Selection
 st.subheader('Stock Price Predictions Per Model')
@@ -181,6 +363,15 @@ fig = px.line(filtered_data, x='date', y=['close', model_column],
               title=f'{stock_choice} Actual vs Predicted Closing Price ({model_choice})')
 
 fig.update_layout(legend_title_text='Price Type', width=2000, height=700)
-fig.update_traces(mode="lines")
+# Customize colors for each line
+fig.update_traces(
+    line=dict(color='blue'),  # Actual close prices
+    selector=dict(name='close')
+)
+
+fig.update_traces(
+    line=dict(color='yellow'),  # Model prediction
+    selector=dict(name=model_column)
+)
 
 st.plotly_chart(fig)
