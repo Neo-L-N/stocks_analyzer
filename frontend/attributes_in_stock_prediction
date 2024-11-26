@@ -1,0 +1,22 @@
+#Attributes Used in Stock Price Prediction
+st.header('Attributes Used in Stock Price Prediction')
+
+st.markdown("""
+In predicting stock prices, several key attributes are utilized to capture the market's dynamics and trends. These attributes include:
+
+- **Open**: The price at which a stock first trades upon the opening of an exchange on a given trading day. It provides an initial indication of the market's sentiment and can be influenced by news and events occurring after the previous day's close.
+
+- **High**: The maximum price at which a stock trades during a trading session. This attribute helps in understanding the stock's volatility and the upper resistance levels during the day.
+
+- **Low**: The minimum price at which a stock trades during a trading session. It is crucial for identifying the stock's support levels and potential buying opportunities.
+
+- **Volume**: The total number of shares traded during a specific period. High trading volumes can indicate strong investor interest and are often associated with significant price movements.
+
+- **Return**: This is typically calculated as the percentage change in the stock's price over a specific period. It provides insights into the stock's performance and is a critical measure for investors.
+
+- **Rolling Mean**: Also known as the moving average, it smooths out price data by creating a constantly updated average price. This helps in identifying trends over time and is useful for reducing noise in volatile data.
+
+- **Rolling Standard Deviation**: This measures the amount of variation or dispersion of a set of values. In the context of stock prices, it helps in understanding the volatility over a specific period.
+
+These attributes are essential for building predictive models as they provide insights into the stock's historical performance and market behavior. By analyzing these features, machine learning models can identify patterns and make informed predictions about future stock prices.
+""")
