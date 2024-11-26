@@ -1,4 +1,4 @@
-#Attributes Used in Stock Price Prediction
+# Attributes Used in Stock Price Prediction Section
 st.header('Attributes Used in Stock Price Prediction')
 
 st.markdown("""
@@ -20,3 +20,26 @@ In predicting stock prices, several key attributes are utilized to capture the m
 
 These attributes are essential for building predictive models as they provide insights into the stock's historical performance and market behavior. By analyzing these features, machine learning models can identify patterns and make informed predictions about future stock prices.
 """)
+
+# Add a sample visualization
+import plotly.graph_objects as go
+from datetime import datetime, timedelta
+
+# Create sample data
+dates = [datetime.now() - timedelta(days=x) for x in range(30)]
+sample_prices = np.random.normal(100, 10, 30).cumsum()
+volume = np.random.randint(1000, 5000, 30)
+
+# plot
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=dates, y=sample_prices, name='Price'))
+fig.add_trace(go.Bar(x=dates, y=volume, name='Volume', yaxis='y2'))
+
+fig.update_layout(
+    title='Sample Stock Price and Volume Interaction',
+    yaxis=dict(title='Price'),
+    yaxis2=dict(title='Volume', overlaying='y', side='right'),
+    height=400
+)
+
+st.plotly_chart(fig)
